@@ -36,7 +36,7 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: wp-pv
-  namespace: kustomize-namespace
+  namespace: kustomize
   labels:
     environment : development
     domain: www.domain.com
@@ -65,7 +65,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: wp-pvc
-  namespace: kustomize-namespace
+  namespace: kustomize
   labels:
     environment : development
     domain: www.domain.com
@@ -184,7 +184,7 @@ spec:
         - name: WORDPRESS_DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: Kustomize-password
+              name: kustomize-password
               key: password
         - name: WPVAR_WP_HOME
           valueFrom:
