@@ -1,0 +1,122 @@
+version: '3.5'
+services:
+  zabbix-server:
+    container_name: zabbix-server
+    restart: always
+    image: zabbix/zabbix-server-mysql:ubuntu-5.4-latest
+    ports:
+     - "10051:10051"
+    volumes:
+     - /etc/localtime:/etc/localtime:ro
+     - usr_lib_zabbix_alertscripts:/usr/lib/zabbix/alertscripts:ro
+     - usr_lib_zabbix_externalscripts:/usr/lib/zabbix/externalscripts:ro
+     - var_lib_zabbix_export:/var/lib/zabbix/export:rw
+     - var_lib_zabbix_modules:/var/lib/zabbix/modules:ro
+     - var_lib_zabbix_enc:/var/lib/zabbix/enc:ro
+     - var_lib_zabbix_ssh_keys:/var/lib/zabbix/ssh_keys:ro
+     - var_lib_zabbix_mibs:/var/lib/zabbix/mibs:ro
+     - snmptraps:/var/lib/zabbix/snmptraps:rw
+    links:
+     - mysql-server:mysql-server
+    env_file:
+     - .env_db_mysql
+     - .env_srv
+    secrets:
+     - MYSQL_USER
+     - MYSQL_PASSWORD
+     - MYSQL_ROOT_PASSWORD
+    depends_on:
+     - mysql-server
+
+  zabbix-web-nginx-mysql:
+    container_name: zabbix-nginx
+    restart: always
+    image: zabbix/zabbix-web-nginx-mysql:ubuntu-5.4-latest
+    ports:
+     - "8081:8080"
+     - "8443:8443"
+    links:
+     - mysql-server:mysql-server
+     - zabbix-server:zabbix-server
+    volumes:
+     - /etc/localtime:/etc/localtime:ro
+     - etc_ssl_nginx:/etc/ssl/nginx:ro
+     - usr_share_zabbix_modules:/usr/share/zabbix/modules/:ro
+    env_file:
+     - .env_db_mysql
+     - .env_web
+    secrets:
+     - MYSQL_USER
+     - MYSQL_PASSWORD
+    depends_on:
+     - mysql-server
+     - zabbix-server
+
+#  zabbix-agent:
+#    container_name: zabbix-agent
+#    image: zabbix/zabbix-agent:ubuntu-5.2-latest
+#    ports:
+#     - "10050:10050"
+#    volumes:
+#     - /etc/localtime:/etc/localtime:ro
+#     - etc_zabbix_zabbix_agentd.d:/etc/zabbix/zabbix_agentd.d:ro
+#     - var_lib_zabbix_modules:/var/lib/zabbix/modules:ro
+#     - var_lib_zabbix_enc:/var/lib/zabbix/enc:ro
+#     - var_lib_zabbix_ssh_keys:/var/lib/zabbix/ssh_keys:ro
+#    links:
+#     - zabbix-server:zabbix-server
+#    env_file:
+#     - .env_agent
+#    privileged: true
+#    pid: "host"
+
+  mysql-server:
+    container_name: zabbix-mariadb
+    restart: always
+    image: mariadb:latest
+#    ports:
+#     - "3306:3306"
+#    external_links:
+#      - grafana
+    command:
+     - mysqld
+     - --character-set-server=utf8
+     - --collation-server=utf8_bin
+     - --default-authentication-plugin=mysql_native_password
+    volumes:
+     - var_lib_mysql:/var/lib/mysql:rw
+    env_file:
+     - .env_db_mysql
+#    environment:
+#     - MYSQL_TCP_PORT=3306
+    secrets:
+     - MYSQL_USER
+     - MYSQL_PASSWORD
+     - MYSQL_ROOT_PASSWORD
+
+volumes:
+  snmptraps:
+  usr_lib_zabbix_alertscripts:
+  usr_lib_zabbix_externalscripts:
+  var_lib_zabbix_export:
+  var_lib_zabbix_modules:
+  var_lib_zabbix_enc:
+  var_lib_zabbix_ssh_keys:
+  var_lib_zabbix_mibs:
+  etc_ssl_nginx:
+  usr_share_zabbix_modules:
+#  etc_zabbix_zabbix_agentd.d:
+  var_lib_mysql:
+
+secrets:
+  MYSQL_USER:
+    file: ./.MYSQL_USER
+  MYSQL_PASSWORD:
+    file: ./.MYSQL_PASSWORD
+  MYSQL_ROOT_PASSWORD:
+    file: ./.MYSQL_ROOT_PASSWORD
+
+networks:
+  default:
+    external:
+      name: monitoring
