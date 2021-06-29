@@ -1,0 +1,184 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  labels:
+    environment : development
+    domain: www.domain.com
+    tier: backend
+    app.kubernetes.io/name: mariadb
+    app.kubernetes.io/instance: mariadb-rpi-01
+    app.kubernetes.io/version: "10.6"
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: wordpress
+    app.kubernetes.io/managed-by: github
+    app.kubernetes.io/created-by: controller-manager
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      protocol: TCP
+      port: 33301
+      targetPort: 3306
+  selector:
+    environment : development
+    domain: www.domain.com
+    tier: backend
+    app.kubernetes.io/name: mariadb
+    app.kubernetes.io/instance: mariadb-rpi-01
+    app.kubernetes.io/version: "10.6"
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: wordpress
+    app.kubernetes.io/managed-by: github
+    app.kubernetes.io/created-by: controller-manager
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: db-pv
+  namespace: kustomize-namespace
+  labels:
+    environment : development
+    domain: www.domain.com
+    tier: backend
+    path: var-lib-mysql
+    app.kubernetes.io/name: mariadb
+    app.kubernetes.io/instance: mariadb-rpi-01
+    app.kubernetes.io/version: "10.6"
+    app.kubernetes.io/component: pv
+    app.kubernetes.io/part-of: wordpress
+    app.kubernetes.io/managed-by: github
+    app.kubernetes.io/created-by: controller-manager
+spec:
+  storageClassName: glusterfs-no-provisioner
+  volumeMode: Filesystem
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/glusterfs/pv/dev/wordpress/www-microk8-work/mysql"
+    type: DirectoryOrCreate
+  persistentVolumeReclaimPolicy: Delete
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: db-pvc
+  namespace: kustomize-namespace
+  labels:
+    environment : development
+    domain: www.domain.com
+    tier: backend
+    path: var-lib-mysql
+    app.kubernetes.io/name: mariadb
+    app.kubernetes.io/instance: mariadb-rpi-01
+    app.kubernetes.io/version: "10.6"
+    app.kubernetes.io/component: pvc
+    app.kubernetes.io/part-of: wordpress
+    app.kubernetes.io/managed-by: github
+    app.kubernetes.io/created-by: controller-manager
+spec:
+  storageClassName: glusterfs-no-provisioner
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      environment : development
+      domain: www.domain.com
+      tier: backend
+      path: var-lib-mysql
+      app.kubernetes.io/name: mariadb
+      app.kubernetes.io/instance: mariadb-rpi-01
+      app.kubernetes.io/version: "10.6"
+      app.kubernetes.io/component: pv
+      app.kubernetes.io/part-of: wordpress
+      app.kubernetes.io/managed-by: github
+      app.kubernetes.io/created-by: controller-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  labels:
+    environment : development
+    domain: www.domain.com
+    tier: backend
+    app.kubernetes.io/name: mariadb
+    app.kubernetes.io/instance: mariadb-rpi-01
+    app.kubernetes.io/version: "10.6"
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: wordpress
+    app.kubernetes.io/managed-by: github
+    app.kubernetes.io/created-by: controller-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      environment : development
+      domain: www.domain.com
+      tier: backend
+      app.kubernetes.io/name: mariadb
+      app.kubernetes.io/instance: mariadb-rpi-01
+      app.kubernetes.io/version: "10.6"
+      app.kubernetes.io/component: database
+      app.kubernetes.io/part-of: wordpress
+      app.kubernetes.io/managed-by: github
+      app.kubernetes.io/created-by: controller-manager
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        environment : development
+        domain: www.domain.com 
+        tier: backend
+        app.kubernetes.io/name: mariadb
+        app.kubernetes.io/instance: mariadb-rpi-01
+        app.kubernetes.io/version: "10.6"
+        app.kubernetes.io/component: database
+        app.kubernetes.io/part-of: wordpress
+        app.kubernetes.io/managed-by: github
+        app.kubernetes.io/created-by: controller-manager
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: tier
+                operator: In
+                values:
+                - backend
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - image: microk8s_mariadb:local
+        imagePullPolicy: Never
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+          requests:
+            memory: 256Mi
+            cpu: "1"
+        name: mariadb
+        env: 
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: kustimize-password
+              key: password
+        ports:
+        - containerPort: 3306
+          name: mariadb
+        volumeMounts:
+        - name: mariadb
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mariadb
+        persistentVolumeClaim:
+          ### not kustimize
+          claimName: db-pvc

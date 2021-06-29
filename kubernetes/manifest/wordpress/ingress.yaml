@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-microk8s-work
+spec:
+  rules:
+  - host: www.microk8s.work
+    http:
+      paths:
+      - backend:
+          serviceName: frontend
+          servicePort: 80

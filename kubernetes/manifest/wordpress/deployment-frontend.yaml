@@ -1,0 +1,254 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  labels:
+    environment : development
+    domain: www.domain.com
+    tier: frontend
+    app.kubernetes.io/name: wordpress
+    app.kubernetes.io/instance: wordpress-rpi-01
+    app.kubernetes.io/version: "5.7.2"
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: wordpress
+    app.kubernetes.io/managed-by: github
+    app.kubernetes.io/created-by: controller-manager
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  selector:
+    environment : development
+    domain: www.domain.com
+    tier: frontend
+    app.kubernetes.io/name: wordpress
+    app.kubernetes.io/instance: wordpress-rpi-01
+    app.kubernetes.io/version: "5.7.2"
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: wordpress
+    app.kubernetes.io/managed-by: github
+    app.kubernetes.io/created-by: controller-manager
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: wp-pv
+  namespace: kustomize-namespace
+  labels:
+    environment : development
+    domain: www.domain.com
+    tier: storage
+    path: var-www-html
+    app.kubernetes.io/name: wordpress
+    app.kubernetes.io/instance: wordpress-rpi-01
+    app.kubernetes.io/version: "5.7.2"
+    app.kubernetes.io/component: pv
+    app.kubernetes.io/part-of: wordpress
+    app.kubernetes.io/managed-by: github
+    app.kubernetes.io/created-by: controller-manager
+spec:
+  storageClassName: glusterfs-no-provisioner
+  volumeMode: Filesystem
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/glusterfs/pv/dev/wordpress/www-microk8-work/wp"
+    type: DirectoryOrCreate
+  persistentVolumeReclaimPolicy: Delete
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: wp-pvc
+  namespace: kustomize-namespace
+  labels:
+    environment : development
+    domain: www.domain.com
+    tier: storage
+    path: var-www-html
+    app.kubernetes.io/name: wordpress
+    app.kubernetes.io/instance: wordpress-rpi-01
+    app.kubernetes.io/version: "5.7.2"
+    app.kubernetes.io/component: pv
+    app.kubernetes.io/part-of: wordpress
+    app.kubernetes.io/managed-by: github
+    app.kubernetes.io/created-by: controller-manager
+spec:
+  storageClassName: glusterfs-no-provisioner
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  selector:
+    matchLabels:
+      environment : development
+      domain: www.domain.com
+      tier: storage
+      path: var-www-html
+      app.kubernetes.io/name: wordpress
+      app.kubernetes.io/instance: wordpress-rpi-01
+      app.kubernetes.io/version: "5.7.2"
+      app.kubernetes.io/component: pv
+      app.kubernetes.io/part-of: wordpress
+      app.kubernetes.io/managed-by: github
+      app.kubernetes.io/created-by: controller-manager
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  labels:
+    environment : development
+    domain: www.domain.com
+    tier: frontend
+    app.kubernetes.io/name: wordpress
+    app.kubernetes.io/instance: wordpress-rpi-01
+    app.kubernetes.io/version: "5.7.2"
+    app.kubernetes.io/component: server
+    app.kubernetes.io/part-of: wordpress
+    app.kubernetes.io/managed-by: github
+    app.kubernetes.io/created-by: controller-manager
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      environment : development
+      domain: www.domain.com
+      tier: frontend
+      app.kubernetes.io/name: wordpress
+      app.kubernetes.io/instance: wordpress-rpi-01
+      app.kubernetes.io/version: "5.7.2"
+      app.kubernetes.io/component: server
+      app.kubernetes.io/part-of: wordpress
+      app.kubernetes.io/managed-by: github
+      app.kubernetes.io/created-by: controller-manager
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        environment : development
+        domain: www.domain.com
+        tier: frontend
+        app.kubernetes.io/name: wordpress
+        app.kubernetes.io/instance: wordpress-rpi-01
+        app.kubernetes.io/version: "5.7.2"
+        app.kubernetes.io/component: server
+        app.kubernetes.io/part-of: wordpress
+        app.kubernetes.io/managed-by: github
+        app.kubernetes.io/created-by: controller-manager
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: tier
+                operator: In
+                values:
+                - frontend
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - image: microk8s_wordpress:local
+        imagePullPolicy: Never
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "1"
+          requests:
+            memory: 256Mi
+            cpu: "1"
+        name: wordpress
+        env:
+        - name: WORDPRESS_DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: WORDPRESS_DB_HOST
+        - name: WPVAR_DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: DB_USER
+        - name: WPVAR_DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: DB_NAME
+        - name: WORDPRESS_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: kustimize-password
+              key: password
+        - name: WPVAR_WP_HOME
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: WP_HOME
+        - name: WPVAR_WP_SITEURL
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: WP_SITEURL
+        - name: WPVAR_TABLE_PREFIX
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: TABLE_PREFIX
+#        - name: WPVAR_WP_CONTENT_DIR
+#          valueFrom:
+#            configMapKeyRef:
+#              name: template-config
+#              key: WP_CONTENT_DIR
+        - name: WPVAR_FS_METHOD
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: FS_METHOD
+        - name: WPVAR_WP_DEBUG
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: WP_DEBUG
+        - name: WPVAR_WP_DEBUG_LOG
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: WP_DEBUG_LOG
+        - name: WPVAR_WP_DEBUG_DISPLAY
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: WP_DEBUG_DISPLAY
+        - name: WPVAR_WP_POST_REVISIONS
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: WP_POST_REVISIONS
+        - name: WPVAR_DB_CHARSET
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: DB_CHARSET
+        - name: WPVAR_DB_COLLATE
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: DB_COLLATE
+        ports:
+        - containerPort: 80
+          name: wordpress
+        volumeMounts:
+        - name: wordpress
+          mountPath: /var/www/html
+      volumes:
+      - name: wordpress
+        persistentVolumeClaim:
+          ### not kustimize
+          claimName: wp-pvc
