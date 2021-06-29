@@ -1,0 +1,113 @@
+variables:
+  KUBERNETES_NAMESPACE_OVERWRITE: ci-${CI_COMMIT_REF_SLUG}
+  KUBERNETES_SERVICE_ACCOUNT_OVERWRITE: ci-service-account
+
+
+### other branch ###
+
+stages:
+  - build
+  - test
+  - deploy
+
+build to staging:
+  stage: build
+  except:
+    - master
+  tags:
+    - arm64
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Docker/DockerFile/wordpress/Dockerfile --destination $CI_REGISTRY_IMAGE/wordpress:$CI_COMMIT_TAG
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Docker/DockerFile/mariadb/Dockerfile --destination $CI_REGISTRY_IMAGE/mariadb:$CI_COMMIT_TAG
+  environment:
+   name: staging
+
+Frontend to staging:
+  stage: test
+  except:
+    - master
+  image: registry.gitlab.com/username/repository/wordpress:test
+  tags:
+    - arm64
+  script: 
+    - ls -la /var/www/html
+
+Backend to staging:
+  image: registry.gitlab.com/username/repository/mariadb:test
+  stage: test
+  except:
+    - master
+  tags:
+    - arm64
+  script: 
+    - ls -l /var/lib/mysql
+
+deploy to staging:
+  stage: deploy
+  image: registry.gitlab.com/username/repository/kubectl:prod
+  except:
+    - master
+  tags:
+    - arm64
+  script:
+    - kubectl get node
+    - kubectl get all -A -o wide
+  environment:
+    name: staging
+    url: http://192.168.1.50
+
+### master branch ###
+
+build to production:
+  stage: build
+  only:
+    - master
+  tags:
+    - arm64
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: [""]
+  script:
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Docker/DockerFile/wordpress/Dockerfile --destination $CI_REGISTRY_IMAGE/wordpress:$CI_COMMIT_TAG
+    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Docker/DockerFile/mariadb/Dockerfile --destination $CI_REGISTRY_IMAGE/mariadb:$CI_COMMIT_TAG
+  environment:
+    name: production
+
+Frontend to production:
+  stage: test
+  only:
+    - master
+  image: registry.gitlab.com/username/repository/wordpress:prod
+  tags:
+    - arm64
+  script: 
+    - ls -la /var/www/html
+
+Backend to production:
+  stage: test
+  only:
+    - master
+  image: registry.gitlab.com/username/repository/mariadb:prod
+  tags:
+    - arm64
+  script: 
+    - ls -l /var/lib/mysql
+
+deploy to production:
+  image: registry.gitlab.com/username/repository/kubectl:prod
+  stage: deploy
+  only:
+    - master
+  tags:
+    - arm64
+  script:
+    - kubectl get node
+    - kubectl get all -A -o wide
+  environment:
+    name: production
+    url: http://192.168.1.51
