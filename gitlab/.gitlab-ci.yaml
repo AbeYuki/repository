@@ -31,14 +31,14 @@ Frontend to staging:
   stage: test
   except:
     - master
-  image: registry.gitlab.com/alcidvegas/repository/wordpress:test
+  image: registry.gitlab.com/username/repository/wordpress:test
   tags:
     - arm64
   script: 
     - ls -la /var/www/html
 
 Backend to staging:
-  image: registry.gitlab.com/alcidvegas/repository/mariadb:test
+  image: registry.gitlab.com/username/repository/mariadb:test
   stage: test
   except:
     - master
@@ -49,7 +49,7 @@ Backend to staging:
 
 deploy to staging:
   stage: deploy
-  image: registry.gitlab.com/alcidvegas/repository/kubectl:prod
+  image: registry.gitlab.com/username/repository/kubectl:prod
   except:
     - master
   tags:
