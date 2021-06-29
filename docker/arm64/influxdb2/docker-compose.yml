@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  influxdb:
+    container_name: influxdb2-monitoring
+    restart: always
+    image: influxdb:latest
+    volumes:
+      - $PWD/scripts:/docker-entrypoint-initdb.d
+      - influxdb2_data:/var/lib/influxdb2
+      - influxdb2_config:/etc/influxdb2
+    ports:
+      - "8083:8083"
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=username
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password
+      - DOCKER_INFLUXDB_INIT_ORG=org
+      - DOCKER_INFLUXDB_INIT_BUCKET=monitoring
+      - DOCKER_INFLUXDB_INIT_RETENTION=1w
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=admin-token
+
+volumes:
+  influxdb2_data:
+  influxdb2_config:
+
+networks:
+    default:
+        external:
+            name: monitoring
