@@ -184,7 +184,7 @@ spec:
         - name: WORDPRESS_DB_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: kustimize-password
+              name: Kustomize-password
               key: password
         - name: WPVAR_WP_HOME
           valueFrom:
@@ -250,5 +250,4 @@ spec:
       volumes:
       - name: wordpress
         persistentVolumeClaim:
-          ### not kustimize
           claimName: wp-pvc

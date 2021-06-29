@@ -18,7 +18,7 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      port: 33301
+      port: 33300
       targetPort: 3306
   selector:
     environment : development
@@ -57,7 +57,7 @@ spec:
   accessModes:
     - ReadWriteMany
   hostPath:
-    path: "/mnt/glusterfs/pv/dev/wordpress/www-microk8-work/mysql"
+    path: "/mnt/glusterfs/pv/dev/wordpress/www-domain-com/mysql"
     type: DirectoryOrCreate
   persistentVolumeReclaimPolicy: Delete
 ---
@@ -169,7 +169,7 @@ spec:
         - name: MYSQL_ROOT_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: kustimize-password
+              name: Kustomize-password
               key: password
         ports:
         - containerPort: 3306
@@ -180,5 +180,4 @@ spec:
       volumes:
       - name: mariadb
         persistentVolumeClaim:
-          ### not kustimize
           claimName: db-pvc

@@ -4,7 +4,7 @@ metadata:
   name: metadata-labels
 labels:
   environment : development
-  domain: www.microk8s.work
+  domain: www.domain.com
 fieldSpecs:
 - path: metadata/labels
   create: true
