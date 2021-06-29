@@ -83,7 +83,7 @@ Frontend to production:
   stage: test
   only:
     - master
-  image: registry.gitlab.com/alcidvegas/repository/wordpress:prod
+  image: registry.gitlab.com/username/repository/wordpress:prod
   tags:
     - arm64
   script: 
@@ -93,14 +93,14 @@ Backend to production:
   stage: test
   only:
     - master
-  image: registry.gitlab.com/alcidvegas/repository/mariadb:prod
+  image: registry.gitlab.com/username/repository/mariadb:prod
   tags:
     - arm64
   script: 
     - ls -l /var/lib/mysql
 
 deploy to production:
-  image: registry.gitlab.com/alcidvegas/repository/kubectl:prod
+  image: registry.gitlab.com/username/repository/kubectl:prod
   stage: deploy
   only:
     - master
