@@ -16,7 +16,7 @@ docker exec -it ansible /bin/bash
 ``` 
 <br>
 
-# 4. ansibleコンテナ実行し、ssh設定を行う
+# 4. ansibleコンテナで以下コマンドを実行し、ssh・ hosts 設定を行う
 ### 各nodeコンテナの hosts 情報を ansible コンテナの hosts ファイルへ追記
 ```bash
 /bin/bash -c "ssh  node01 tail -1 /etc/hosts >> /etc/hosts && ssh node02 tail -1 /etc/hosts >> /etc/hosts  && ssh  node03 tail -1 /etc/hosts >> /etc/hosts"
