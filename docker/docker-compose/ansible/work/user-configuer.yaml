@@ -1,0 +1,12 @@
+- hosts: node
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: Add the user 'tmpuser'
+      user:
+        name: tmpuser
+    - name: Add the group 'tmpuser'
+      group:
+        name: tmpuser
+        git: 1001

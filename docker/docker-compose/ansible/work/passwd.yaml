@@ -1,0 +1,8 @@
+- hosts: node
+  gather_facts: no
+  become: yes
+  tasks:
+    - name: "rootユーザーのパスワードを変更"
+      user:
+        name: "root"
+        password: "{{ 'パスワードを指定'|password_hash('sha512') }}"

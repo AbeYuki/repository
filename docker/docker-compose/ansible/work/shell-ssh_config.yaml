@@ -1,0 +1,21 @@
+- name: sshd_config
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: configer
+      shell:
+        cmd: |
+          cat << EOF > /etc/ssh/sshd_config
+          SyslogFacility AUTHPRIV 
+          LogLevel VERBOSE
+          Protocol 2
+          UsePAM no
+          ChallengeResponseAuthentication no
+          Port 22
+          #PermitRootLogin no #rootログイン無効
+          PubkeyAuthentication yes 
+          AuthorizedKeysFile %h/.ssh/authorized_keys
+          #AllowUsers YA-KubernetesPi
+          PermitEmptyPasswords no
+          EOF
