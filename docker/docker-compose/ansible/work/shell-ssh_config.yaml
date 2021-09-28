@@ -16,6 +16,6 @@
           #PermitRootLogin no #rootログイン無効
           PubkeyAuthentication yes 
           AuthorizedKeysFile %h/.ssh/authorized_keys
-          #AllowUsers YA-KubernetesPi
+          #AllowUsers UserName
           PermitEmptyPasswords no
           EOF
