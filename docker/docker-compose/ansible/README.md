@@ -26,12 +26,22 @@ docker exec -it ansible /bin/bash
 ```
 <br>
 
-### 上記で秘密鍵認証が完了したので、 パスワード認証を no に変更
+### 上記で秘密鍵認証が完了したので、 パスワード認証を no に変更( ansible コンテナから実行)
 ```bash
-ssh  node01 "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config" \
+ssh  node01 "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config"  \
 && ssh node02 "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config" \
 && ssh  node03 "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config"
 ```
+<br>
+
+### sshd_config の reload ( ansible コンテナから実行)
+```bash 
+ssh  node01 service sshd reload  \
+&& ssh node02 service sshd reload \
+&& ssh node03 service sshd reload
+
+```
+<br>
 
 # 5. ansible コンテナから node コンテナに対して疎通確認
 ```bash
