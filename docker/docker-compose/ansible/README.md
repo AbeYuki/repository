@@ -16,29 +16,31 @@ docker exec -it ansible /bin/bash
 ``` 
 <br>
 
-# 4. ansibleコンテナで以下コマンドを実行し、ssh・ hosts 設定を行う
-### 各nodeコンテナの hosts 情報を ansible コンテナの hosts ファイルへ追記
+# 4. ansible コンテナで以下コマンドを実行し、ssh・ hosts 設定を行う
+
+### build 時に作成した公開鍵を各 node コンテナの authorizekey に記載
+※[fingerprint] は 「 yes 」にする。
+※パスワードは 「 node 」としています。  
 ```bash
-/bin/bash -c "ssh  node01 tail -1 /etc/hosts >> /etc/hosts && ssh node02 tail -1 /etc/hosts >> /etc/hosts  && ssh  node03 tail -1 /etc/hosts >> /etc/hosts"
-```
-### build時に作成した公開鍵を各nodeコンテナのauthorizekeyに記載
-```bash
-/bin/bash -c "scp -pr /root/.ssh root@node01:~/ && scp -pr /root/.ssh root@node02:~/ && scp -pr /root/.ssh root@node03:~/"
+/bin/bash -c "scp -pr /root/.ssh/authorized_keys root@node01:/root/.ssh/authorized_keys && scp -pr /root/.ssh/authorized_keys root@node02:/root/.ssh/authorized_keys && scp -pr /root/.ssh/authorized_keys root@node03:/root/.ssh/authorized_keys"
 ```
 <br>
 
-# 5. ansible 疎通確認
+### 上記で秘密鍵認証が完了したので、 パスワード認証を no に変更
+```bash
+ssh  node01 "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config" \
+&& ssh node02 "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config" \
+&& ssh  node03 "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config"
+```
+
+# 5. ansible コンテナから node コンテナに対して疎通確認
 ```bash
 ansible node -m ping
 ```
 <br>
 
-# 6. playbook
+# 6. ansible コンテナから playbook を実行
 ```bash
 ansible-playbook install.yaml
 ```
 <br>
-
-# 備考
-4.にて鍵認証のセットアップ手順を記載しているが、各Nodeへのssh設定はパスワード認証としている  
-秘密鍵を用いたssh_configでの疎通確認は各人で設定をお願いします。
