@@ -7,6 +7,7 @@
       shell:
         cmd: |
           cat << EOF > /etc/ssh/sshd_config
+          Subsystem sftp  /usr/lib/openssh/sftp-server
           SyslogFacility AUTHPRIV 
           LogLevel VERBOSE
           Protocol 2
