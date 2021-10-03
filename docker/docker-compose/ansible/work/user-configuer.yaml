@@ -6,7 +6,13 @@
     - name: Add the user 'tmpuser'
       user:
         name: tmpuser
-    - name: Add the group 'tmpuser'
+        update_password: on_create
+        password: "{{ 'node' | password_hash('sha512') }}"
+        state: present 
+        uid: 1000
+        shell: /bin/bash
+        groups: adm,cdrom,floppy,sudo,audio,dip,plugdev
+    - name: Add the group 'tmpgroup'
       group:
-        name: tmpuser
-        git: 1001
+        name: tmpgroup
+        gid: 1001
