@@ -63,10 +63,3 @@
           name: docker-compose
           state: latest
           update_cache: yes
-####### docker in docker の設定は行っていないため起動させない
-#      - name: start & enabled docker-compose
-#        service:
-#            name: docker-compose
-#            state: started
-#            enabled: yes
-
