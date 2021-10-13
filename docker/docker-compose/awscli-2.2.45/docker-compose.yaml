@@ -1,0 +1,10 @@
+version: '3.9'
+
+services:
+  aws-cli:
+    image: amazon/aws-cli:2.2.45
+    container_name: aws-cli
+    tty: true
+    entrypoint: /bin/bash
+    volumes: 
+      - ~/.aws:/root/.aws
