@@ -28,3 +28,8 @@ bash-4.2# aws --version
 aws-cli/2.2.45 Python/3.8.8 Linux/5.4.0-1044-raspi docker/aarch64.amzn.2 prompt/off
 ```
 
+## ローカルから実行
+```bash
+docker exec aws-cli aws --version
+aws-cli/2.2.45 Python/3.8.8 Linux/5.4.0-1044-raspi docker/aarch64.amzn.2 prompt/off
+```
