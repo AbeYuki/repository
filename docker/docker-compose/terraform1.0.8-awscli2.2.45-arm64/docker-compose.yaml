@@ -1,0 +1,13 @@
+version: '3.9'
+
+services: 
+  terraform-aws:
+    build: .
+    container_name: terraform-aws
+    tty: true
+    volumes: 
+      - ~/.aws:/root/.aws
+#    environment:
+#      - AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxx
+#      - AWS_SECRET_ACCESS_KEY=xxxxxxxxxxxxxxxxxxx
+#      - AWS_DEFAULT_REGION=ap-northeast-1
