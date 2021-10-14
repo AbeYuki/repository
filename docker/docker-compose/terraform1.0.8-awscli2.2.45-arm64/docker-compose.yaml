@@ -2,6 +2,9 @@ version: '3.9'
 
 services: 
   terraform-aws:
+    labels:
+      terraform: "1.0.8"
+      awscli: "2.2.45"
     build: .
     container_name: terraform-aws
     tty: true
