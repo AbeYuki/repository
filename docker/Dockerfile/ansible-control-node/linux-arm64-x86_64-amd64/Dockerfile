@@ -7,7 +7,6 @@ RUN apt-get update && apt-get install -y \
     wget \
     sudo \
     && apt-add-repository --yes --update ppa:ansible/ansible \
-    && apt-update \
     && apt-get install -y ansible
 RUN mkdir /root/.ssh/ 
 RUN ssh-keygen -f /root/.ssh/id_ecdsa -t ecdsa -b 521 -N '' \
