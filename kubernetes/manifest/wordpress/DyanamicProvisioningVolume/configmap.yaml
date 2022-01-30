@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: template-config
+data:
+  wordpress_db_host: www-kustomize-com-backend-db01-001:33309 # Kustomize Prefix + backend + Suffix : port
+  wordpress_db_name: wordpress
+  wordpress_db_user: wordpress
+  mysql_database_wp: wordpress
+  mysql_user_wp : wordpress

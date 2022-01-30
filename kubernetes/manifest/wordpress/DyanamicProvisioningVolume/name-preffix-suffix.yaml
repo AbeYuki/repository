@@ -1,0 +1,14 @@
+namePrefix:
+- path: spec/template/spec/containers/name
+  kind: Deployment
+- path: spec/acme/privateKeySecretRef/name
+  kind: ClusterIssuer
+- path: spec/tls/secretName
+  kind: Ingress
+nameSuffix:
+- path: spec/template/spec/containers/name
+  kind: Deployment
+- path: spec/acme/privateKeySecretRef/name
+  kind: ClusterIssuer
+- path: spec/tls/secretName
+  kind: Ingress
