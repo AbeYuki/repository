@@ -1,10 +1,10 @@
 # wordpress
 
 ## git clone 
-下記のコマンドで wordpress ディレクトリのみ clone
+下記のコマンドで wordpress_k8s ディレクトリのみ clone
 ```bash
 declare MKDIR=github-AY
-declare SUBDIR=wordpress
+declare SUBDIR=wordpress_k8s
 declare GIT=https://github.com/AbeYuki/repository.git
 bash -c \
 "mkdir $MKDIR

@@ -1,10 +1,10 @@
 # redmine
 
 ## git clone 
-下記のコマンドで redmine ディレクトリのみ clone
+下記のコマンドで redmine_k8s ディレクトリのみ clone
 ```bash
 declare MKDIR=github-AY
-declare SUBDIR=redmine
+declare SUBDIR=redmine_k8s
 declare GIT=https://github.com/AbeYuki/repository.git
 bash -c \
 "mkdir $MKDIR
