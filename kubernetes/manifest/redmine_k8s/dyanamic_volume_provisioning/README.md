@@ -33,7 +33,7 @@ unset MKDIR SUBDIR GIT
 # QuickStart
 
 ## 1. ingress の hosts 設定
-hosts をドメイン名に変更
+hosts をドメイン名に設定  
 
 ingress-tls.yaml
 ```
@@ -43,8 +43,7 @@ spec/tls/rules/hosts
 
 ## 2. ClusterIssuer の設定
 連携する email 設定  
-ingress-contoroller の class 設定 
-
+ingress-contoroller の class 設定   
 
 cluster-issuer.yaml
 ```
@@ -63,14 +62,14 @@ apply -f namespace && apply -k ./
 
 # kustomize
 
-## 1. namespace 修正
+## 1. namespace 設定
 
 namespace.yaml
 ```
 metadata/name
 ```
 
-## 2. ingress の annotations 修正
+## 2. ingress の annotations 設定
 ingress の annotation 設定は transformer-annotations.yaml で行う  
 annotations は kustomize に記載している [prefix + cluster-issuer + suffix] とする
 
@@ -79,8 +78,8 @@ transformer-annotations.yaml
 annotations/cert-manager.io\/cluster-issuer/
 ```
 
-## 3. kustomization 修正
-namespace, labels, prefix, suffix を修正  
+## 3. kustomization 設定
+namespace, labels, prefix, suffix を設定  
 kustomization.yaml
 ```
 namespace
@@ -107,9 +106,8 @@ spec/tls/rules/hosts
 ```
 
 ## 5. ClusterIssuer の設定
-連携する email 設定
-ingress-contoroller の class 設定 
-
+連携する email 設定  
+ingress-contoroller の class 設定  
 
 cluster-issuer.yaml
 ```
