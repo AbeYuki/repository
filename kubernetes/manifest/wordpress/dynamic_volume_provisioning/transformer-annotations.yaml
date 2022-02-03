@@ -3,7 +3,7 @@ kind: AnnotationsTransformer
 metadata:
   name: transformer-annotations
 annotations:
-    cert-manager.io/cluster-issuer: www-kustomize-com-cluster-issuer-001
+    cert-manager.io/cluster-issuer: wordpress-cluster-issuer-001
 fieldSpecs:
 - kind: Ingress
   path: metadata/annotations

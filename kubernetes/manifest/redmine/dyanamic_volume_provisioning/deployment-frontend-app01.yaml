@@ -1,0 +1,108 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-app01
+spec:
+  selector:
+    app: redmine
+    tier: frontend
+  ports:
+  - port: 80
+    targetPort: 3000
+  type: NodePort
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: frontend-app01
+  labels:
+    app: redmine
+    tier: frontend
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeMode: Filesystem
+  storageClassName: longhorn
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-app01
+  labels:
+    app: redmine
+    tier: frontend
+spec:
+  selector:
+    matchLabels:
+      app: redmine
+      tier: frontend
+  template:
+    metadata:
+      labels:
+        app: redmine
+        tier: frontend
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: tier
+                operator: In
+                values:
+                - frontend
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: frontend-app01
+        image: redmine:4.2
+        imagePullPolicy: Always
+        env:
+        - name: REDMINE_DB_MYSQL
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: redmine_db_mysql
+        - name: REDMINE_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: kustomize-password
+              key: password  
+        - name: REDMINE_DB_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: redmine_db_database
+        - name: REDMINE_DB_USERNAME
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: redmine_db_username
+        - name: REDMINE_DB_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: template-config
+              key: redmine_db_port
+        resources:
+          limits:
+            memory: 512Mi
+            cpu: "0.5"
+          requests:
+            memory: 512Mi
+            cpu: "0.25"
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - name: frontend-app01
+          mountPath: /usr/src/redmine/files
+        - name: configuration
+          mountPath: /tmp/
+      volumes:
+      - name: frontend-app01
+        persistentVolumeClaim:
+          claimName: frontend-app01
+      - name: configuration
+        configMap:
+          name: redmine-configuration

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: template-config
+data:
+### APP
+  redmine_db_mysql: redmine-backend-db01-001
+  redmine_db_database: redmine
+  redmine_db_username: redmine
+  redmine_db_port: "33307"
+### DB
+  mariadb_user_rm: redmine
+  mariadb_database: redmine

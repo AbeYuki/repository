@@ -1,0 +1,10 @@
+apiVersion: builtin
+kind: AnnotationsTransformer
+metadata:
+  name: transformer-annotations
+annotations:
+    cert-manager.io/cluster-issuer: redmine-cluster-issuer-001
+fieldSpecs:
+- kind: Ingress
+  path: metadata/annotations
+  create: true

@@ -77,7 +77,7 @@ spec:
 #      imagePullSecrets:
 #        - name: private-registry
       containers:
-      - image: mariadb:10.5
+      - image: backend-image-01
         imagePullPolicy: Always
         resources:
           limits:
