@@ -1,0 +1,26 @@
+- name: Helm Deploy Longhorn 
+  hosts: node5
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Git Pull Origin
+      command:
+        cmd: git -C /gitlab/repository pull origin master
+    - name: Add longhorn helm repo
+      command:
+        cmd: helm repo add longhorn https://charts.longhorn.io
+    - name: Add longhorn helm repo update
+      command:
+        cmd: helm repo update
+    - name: Check namespace
+      shell:
+        cmd: |
+          kubectl get namespace longhorn-system >  /dev/null 2>&1 ; echo $?
+      register: result
+    - name: Create Namespace
+      command:
+        cmd: kubectl create namespace longhorn-system
+      when: result.rc == "0"
+    - name: Install Longhorn
+      command:
+        cmd: helm install longhorn longhorn/longhorn -f /github/repository/Kubernetes/helm/longhorn/values_v1.2.3.yaml --namespace longhorn-system

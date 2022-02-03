@@ -1,0 +1,11 @@
+- name: Helm Deploy Longhorn 
+  hosts: node5
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Git Pull Origin
+      command:
+        cmd: git -C /github/repository pull origin master
+    - name: Uninstall Longhorn
+      command:
+        cmd: helm uninstall longhorn -n longhorn-system

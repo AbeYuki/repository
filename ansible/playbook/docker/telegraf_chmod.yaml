@@ -1,0 +1,10 @@
+- name: docker socket chmod
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Chmod 666 docker.sock
+    file: path=/var/run/docker.sock
+          owner=root 
+          group=docker
+          mode=0666

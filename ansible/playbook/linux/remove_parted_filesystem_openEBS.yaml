@@ -1,0 +1,14 @@
+- name: Delete Filesystem XFS
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Unmount a mounted openEBS volume 
+    mount:
+      path: /var/openebs/
+      state: unmounted
+  - name: Remove partition number 1
+    parted:
+      device: /dev/sda
+      number: 1
+      state: absent

@@ -1,0 +1,9 @@
+- name: Helm install openEBS
+  hosts: node5
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Helm 
+    shell:
+      cmd: microk8s helm3 install openebs-cstor openebs-cstor/cstor -n openebs --create-namespace --set-string csiNode.kubeletDir="/var/snap/microk8s/common/var/lib/kubelet/"
+  - 

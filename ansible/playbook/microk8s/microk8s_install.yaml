@@ -1,0 +1,9 @@
+- name: MicroK8s Install 
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: MicroK8s Latest/Stable Install
+      shell:
+        cmd: |
+          snap install microk8s --classic --channel=latest/stable

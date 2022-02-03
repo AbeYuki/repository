@@ -1,0 +1,10 @@
+- name: Remove Partition Number 1
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Remove partition number 1
+    parted:
+      device: /dev/sda
+      number: 1
+      state: absent

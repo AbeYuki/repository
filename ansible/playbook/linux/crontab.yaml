@@ -1,0 +1,10 @@
+- name: Cron Configure
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Filesystem Input/Output Error Reboot
+    cron:
+      name: Longhorn Input/Output Error Reboot
+      minute: "*/1"
+      job: "if [ $(ls -l /var/lib/longhorn > /dev/null 2>&1 ; echo $?) = 2 ];then /usr/sbin/shutdown -r now ;fi"

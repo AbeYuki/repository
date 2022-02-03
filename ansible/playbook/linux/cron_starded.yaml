@@ -1,0 +1,9 @@
+- name: Create Filesystem XFS
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Make sure a service is running
+    systemd:
+      state: started
+      name: cron

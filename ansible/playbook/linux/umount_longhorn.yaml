@@ -1,0 +1,9 @@
+- name: Umount
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Unmount a mounted longhorn volume 
+    mount:
+      path: /var/lib/longhorn
+      state: unmounted

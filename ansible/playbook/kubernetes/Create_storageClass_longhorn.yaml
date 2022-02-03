@@ -1,0 +1,14 @@
+- name: Create StorageClass Longhorn
+  hosts: node5
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: Check StorageClass
+      shell:
+        cmd: |
+          kubectl get storageclass -n longhorn-system
+      register: result
+    - name: Create Namespace
+      command:
+        cmd: kubectl apply -f /gitlab/repository/Kubernetes/manifest/longhorn/storageclass/storageclass.yaml
+      when: result.rc != No resources found

@@ -1,0 +1,9 @@
+- name: config
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: microk8s configuer
+      shell:
+        cmd: |
+          snap remove microk8s --purge

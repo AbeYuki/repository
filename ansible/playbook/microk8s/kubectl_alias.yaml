@@ -1,0 +1,8 @@
+- name: Kubernetes configuer 
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: kubectl configuer
+      command:
+        cmd: snap alias microk8s.kubectl kubectl

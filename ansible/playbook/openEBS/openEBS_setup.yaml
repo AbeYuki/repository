@@ -1,0 +1,14 @@
+- name: config
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Install open-iscsi  (state=present is optional)
+    apt:
+      name: open-iscsi 
+      state: present
+  - name: enable service iscsid and ensure it is not masked
+    systemd:
+      name: open-iscsi
+      enabled: yes
+      masked: no

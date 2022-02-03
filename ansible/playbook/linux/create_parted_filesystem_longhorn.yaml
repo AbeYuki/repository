@@ -1,0 +1,20 @@
+- name: Create Filesystem XFS
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Create a new primary partition /dev/sda
+    parted:
+      device: /dev/sda
+      number: 1
+      state: present
+  - name: Create a xfs filesystem on /dev/sda1
+    filesystem:
+      fstype: xfs
+      dev: /dev/sda1
+  - name: Mount up device 
+    mount:
+      path: /var/lib/longhorn
+      src: /dev/sda1
+      fstype: xfs
+      state: mounted

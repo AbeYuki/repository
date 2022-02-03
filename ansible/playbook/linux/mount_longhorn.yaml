@@ -1,0 +1,11 @@
+- name: Fstab XFS Longhorn
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: Mount up device 
+    mount:
+      path: /var/lib/longhorn
+      src: /dev/sda1
+      fstype: xfs
+      state: mounted

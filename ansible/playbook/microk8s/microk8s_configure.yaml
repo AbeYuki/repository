@@ -1,0 +1,14 @@
+- name: config
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+    - name: enable helm3
+      command:
+        cmd: microk8s enable helm3
+    - name: alias helm3
+      command:
+        cmd: snap alias microk8s.helm3 helm
+    - name: alias kubectl
+      command:
+        cmd: snap alias microk8s.kubectl kubectl

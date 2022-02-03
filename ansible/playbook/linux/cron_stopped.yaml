@@ -1,0 +1,9 @@
+- name: Create Filesystem XFS
+  hosts: node
+  become: yes
+  gather_facts: no
+  tasks:
+  - name: stop service cron on debian, if running
+    systemd:
+      name: cron
+      state: stopped
