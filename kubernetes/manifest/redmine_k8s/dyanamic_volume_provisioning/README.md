@@ -72,7 +72,7 @@ metadata/name
 ## 2. ingress の annotations 設定
 ingress の annotation 設定は transformer-annotations.yaml で行う  
 annotations は kustomize に記載している [prefix + cluster-issuer + suffix] とする
-
+  
 transformer-annotations.yaml
 ```
 annotations/cert-manager.io\/cluster-issuer/
@@ -80,6 +80,7 @@ annotations/cert-manager.io\/cluster-issuer/
 
 ## 3. kustomization 設定
 namespace, labels, prefix, suffix を設定  
+  
 kustomization.yaml
 ```
 namespace
