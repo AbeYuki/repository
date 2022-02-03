@@ -3,7 +3,7 @@
 <br>  
 
 必要なサブディレクトリは以下のコマンドで clone して下さい。  
-※サンプルでは github-AY ディレクトリを作成し、redmine サブディレクトリのみを clone します。  
+※サンプルでは github-AY ディレクトリを作成し、redmine_k8s サブディレクトリのみを clone します。  
 <br>  
 ```
 MKDIR 変数はローカルに作成するディレクトリ名  
@@ -13,7 +13,7 @@ GIT 変数は取得したいプロジェクト URL
 
 ```bash
 declare MKDIR=github-AY
-declare SUBDIR=redmine
+declare SUBDIR=redmine_k8s
 declare GIT=https://github.com/AbeYuki/repository.git
 bash -c \
 "mkdir $MKDIR
