@@ -32,9 +32,9 @@ unset MKDIR SUBDIR GIT
 
 # QuickStart
 ## 前提条件
-Dyanamic Volume Provisioning 
-cert-manager install 
-Kubernetes =< 1.14
+Dyanamic Volume Provisioning  
+cert-manager install  
+Kubernetes =< 1.14  
 
 ## 1. kustomizetion.yaml 修正
 testing/kustomization.yaml の patchesStrategicMerge を修正  
