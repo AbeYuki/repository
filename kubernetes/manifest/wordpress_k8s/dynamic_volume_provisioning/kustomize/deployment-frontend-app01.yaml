@@ -77,7 +77,7 @@ spec:
 #      imagePullSecrets:
 #        - name: private-registry
       containers:
-      - image: kustomize-image01
+      - image: frontend-app01
         imagePullPolicy: Always
         resources:
           limits:

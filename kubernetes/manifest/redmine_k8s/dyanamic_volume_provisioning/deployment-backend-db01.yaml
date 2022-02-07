@@ -58,7 +58,7 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
       - name: backend-db01
-        image: mariadb:10.5
+        image: backend-image-01
         imagePullPolicy: Always
         env:
         - name: MYSQL_ROOT_PASSWORD

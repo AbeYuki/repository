@@ -57,7 +57,7 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
       - name: frontend-app01
-        image: redmine:4.2
+        image: frontend-image-01
         imagePullPolicy: Always
         env:
         - name: REDMINE_DB_MYSQL
