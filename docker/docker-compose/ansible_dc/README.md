@@ -22,24 +22,22 @@ docker exec -it ansible /bin/bash
 ※[fingerprint] は 「 yes 」にする。
 ※パスワードは 「 node 」としています。  
 ```bash
-/bin/bash -c "scp -pr /root/.ssh/authorized_keys root@node01:/root/.ssh/authorized_keys && scp -pr /root/.ssh/authorized_keys root@node02:/root/.ssh/authorized_keys && scp -pr /root/.ssh/authorized_keys root@node03:/root/.ssh/authorized_keys"
+for i in node01 node02 node03
+do
+    scp -pr /root/.ssh/authorized_keys root@$i:/root/.ssh/authorized_keys
+done
 ```
 <br>
 
-### 上記で秘密鍵認証が完了したので、 パスワード認証を no に変更( ansible コンテナから実行)
+### 上記で秘密鍵認証が完了したので、 パスワード認証を no に変更し、hosts 設定( ansible コンテナから実行)
 ```bash
-ssh  node01 "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config"  \
-&& ssh node02 "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config" \
-&& ssh  node03 "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config"
-```
-<br>
-
-### sshd_config の reload ( ansible コンテナから実行)
-```bash 
-ssh  node01 service sshd reload  \
-&& ssh node02 service sshd reload \
-&& ssh node03 service sshd reload
-
+for i in node01 node02 node03
+do
+    ssh $i "sed -i -e 's/PasswordAuthentication yes/PasswordAuthentication no/g' /etc/ssh/sshd_config"
+    ssh $i service sshd reload
+done \
+&& bash -c "ssh node01 tail -1 /etc/hosts && ssh node02 tail -1 /etc/hosts && ssh node03 tail -1 /etc/hosts" >> /etc/hosts \
+&& bash -c "scp -pr /etc/hosts root@node01:/etc/hosts && scp -pr /etc/hosts root@node02:/etc/hosts && scp -pr /etc/hosts root@node03:/etc/hosts"
 ```
 <br>
 
