@@ -37,24 +37,26 @@ patchesStrategicMerge:
   metadata:
     name: frontend-app01
   spec:
-    storageClassName: longhorn
     accessModes:
-      - ReadWriteMany
+    - ReadWriteMany
     resources:
       requests:
         storage: 1Gi
+    storageClassName: longhorn
+    volumeMode: Filesystem
 - |-
   apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
     name: backend-db01
   spec:
-    storageClassName: longhorn
     accessModes:
-      - ReadWriteMany
+    - ReadWriteMany
     resources:
       requests:
         storage: 1Gi
+    storageClassName: longhorn
+    volumeMode: Filesystem
 - |-
   apiVersion: cert-manager.io/v1
   kind: ClusterIssuer
