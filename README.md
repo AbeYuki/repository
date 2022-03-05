@@ -12,9 +12,10 @@ GIT 変数は取得したいプロジェクト URL
 ```
 
 ```bash
-declare MKDIR=github-AY
-declare SUBDIR=redmine_k8s
-declare GIT=https://github.com/AbeYuki/repository.git
+function github-ay (){
+local MKDIR=github-AY
+local SUBDIR=redmine_k8s
+local GIT=https://github.com/AbeYuki/repository.git
 bash -c \
 "mkdir $MKDIR
 git -C $MKDIR/ init 
@@ -30,6 +31,6 @@ cat <<EOF> $MKDIR/.git/config
 EOF
 git -C $MKDIR remote add origin $GIT
 echo $SUBDIR > $MKDIR/.git/info/sparse-checkout
-git -C $MKDIR pull origin master" ;\
-unset MKDIR SUBDIR GIT
+git -C $MKDIR pull origin master"
+};github-ay;unset -f github-ay
 ```
